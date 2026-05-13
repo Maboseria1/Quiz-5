@@ -1,24 +1,41 @@
+from typing import List
+from collections import deque
+
 class Solution:
     def numIslands(self, grid: List[List[str]]) -> int:
+        if not grid:
+            return 0
+
         rows = len(grid)
         cols = len(grid[0])
         islands = 0
 
-        def dfs(r, c):
-            if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] == "0":
-                return
-            
+        def bfs(r, c):
+            queue = deque()
+            queue.append((r, c))
             grid[r][c] = "0"
 
-            dfs(r + 1, c)
-            dfs(r - 1, c)
-            dfs(r, c + 1)
-            dfs(r, c - 1)
+            directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+            while queue:
+                row, col = queue.popleft()
+
+                for dr, dc in directions:
+                    newRow = row + dr
+                    newCol = col + dc
+
+                    if (
+                        0 <= newRow < rows and
+                        0 <= newCol < cols and
+                        grid[newRow][newCol] == "1"
+                    ):
+                        grid[newRow][newCol] = "0"
+                        queue.append((newRow, newCol))
 
         for r in range(rows):
             for c in range(cols):
                 if grid[r][c] == "1":
                     islands += 1
-                    dfs(r, c)
+                    bfs(r, c)
 
         return islands
